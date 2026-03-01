@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>420 Robotics — Independent AI Safety Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #D42B2B;
+    --red-dark: #9B1919;
+    --red-glow: rgba(212,43,43,0.35);
+    --blue: #1A3A8F;
+    --blue-bright: #2952CC;
+    --blue-glow: rgba(41,82,204,0.35);
+    --gold: #C8A84B;
+    --dark: #06080F;
+    --dark-2: #0C1020;
+    --dark-3: #111828;
+    --dark-4: #182038;
+    --mid: #1E2840;
+    --text: #E8ECF5;
+    --text-dim: #8A95B0;
+    --border: rgba(255,255,255,0.08);
+    --border-red: rgba(212,43,43,0.4);
+    --border-blue: rgba(41,82,204,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── ANIMATED BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 15% 20%, rgba(212,43,43,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 85% 80%, rgba(41,82,204,0.10) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.015) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.015) 80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(6,8,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 3px;
+    display: flex;
+    gap: 6px;
+  }
+  .nav-logo .r { color: var(--red); }
+  .nav-logo .b { color: #4A7AFF; }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--red);
+    color: #fff !important;
+    padding: 8px 20px;
+    border: none !important;
+  }
+  .nav-cta:hover { background: var(--red-dark); color: #fff !important; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 40px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0.22;
+    z-index: -1;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6,8,15,0.3) 0%, rgba(6,8,15,0.65) 60%, var(--dark) 100%);
+    z-index: -1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(212,43,43,0.15);
+    border: 1px solid var(--border-red);
+    padding: 6px 18px;
+    border-radius: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--red);
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+  .hero-wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 140px);
+    letter-spacing: 8px;
+    line-height: 0.9;
+    margin-bottom: 8px;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+  .hero-wordmark .four { color: var(--red); text-shadow: 0 0 40px var(--red-glow); }
+  .hero-wordmark .twenty { color: #fff; }
+  .hero-wordmark .rob { color: #4A7AFF; text-shadow: 0 0 40px var(--blue-glow); }
+  .hero-wordmark .otics { color: #fff; }
+
+  .hero-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 300;
+    font-size: clamp(14px, 2vw, 18px);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    animation: fadeUp 0.9s 0.2s ease both;
+  }
+
+  .hero-motto {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: clamp(18px, 3vw, 26px);
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.9s 0.3s ease both;
+  }
+
+  .hero-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 50px;
+    animation: fadeUp 0.9s 0.4s ease both;
+  }
+  .hero-logos img {
+    height: 70px;
+    width: auto;
+    filter: drop-shadow(0 0 12px rgba(212,43,43,0.4));
+    transition: transform .3s, filter .3s;
+  }
+  .hero-logos img:hover { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(212,43,43,0.7)); }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.9s 0.5s ease both;
+  }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 32px;
+    border: 2px solid;
+    transition: all .25s;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .btn-red { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn-red:hover { background: transparent; color: var(--red); }
+  .btn-outline { background: transparent; border-color: rgba(255,255,255,0.3); color: var(--text); }
+  .btn-outline:hover { border-color: #fff; }
+
+  /* ── SECTION BASE ── */
+  section { position: relative; z-index: 1; }
+  .section-inner { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-red); max-width: 120px; }
+
+  h2.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-red), var(--border-blue), transparent);
+    margin: 0;
+  }
+
+  /* ── BELIEFS STRIP ── */
+  .beliefs-strip {
+    background: var(--dark-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px;
+  }
+  .beliefs-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .belief-item {
+    padding: 6px 30px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .belief-item:last-child { border-right: none; }
+  .belief-item span { display: block; font-size: 10px; letter-spacing: 2px; color: var(--text-dim); margin-top: 2px; }
+
+  /* ── MISSION ── */
+  .mission {
+    padding: 100px 0;
+    background: var(--dark-2);
+  }
+  .mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-top: 48px;
+  }
+  .mission-text p {
+    color: var(--text-dim);
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .mission-text p strong { color: var(--text); font-weight: 700; }
+  .mission-highlight {
+    border-left: 3px solid var(--red);
+    padding: 20px 24px;
+    background: rgba(212,43,43,0.06);
+    margin: 28px 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .mission-img {
+    position: relative;
+  }
+  .mission-img img {
+    width: 100%;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    display: block;
+  }
+  .mission-img::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid var(--border-red);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ── COUNCIL ── */
+  .council {
+    padding: 100px 0;
+    background: var(--dark);
+  }
+  .council-header { text-align: center; margin-bottom: 60px; }
+  .council-subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-top: 12px;
+  }
+  .council-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .council-card {
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    padding: 32px 16px;
+    text-align: center;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .council-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red), var(--blue-bright));
+    transform: scaleX(0);
+    transition: transform .3s;
+  }
+  .council-card:hover { background: var(--dark-4); transform: translateY(-4px); border-color: rgba(255,255,255,0.15); }
+  .council-card:hover::before { transform: scaleX(1); }
+  .council-icon {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--blue-bright);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .council-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .council-role {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── WHAT WE DO ── */
+  .services {
+    padding: 100px 0;
+    background: var(--dark-2);
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .service-card {
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all .3s;
+  }
+  .service-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--red);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform .3s;
+  }
+  .service-card:hover { background: var(--dark-4); padding-left: 36px; }
+  .service-card:hover::after { transform: scaleY(1); }
+  .service-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .service-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .service-desc {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  /* ── GALLERY ── */
+  .gallery {
+    padding: 80px 0;
+    background: var(--dark);
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 48px;
+  }
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--dark-3);
+  }
+  .gallery-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s, filter .5s;
+    filter: saturate(0.7) brightness(0.85);
+  }
+  .gallery-item:hover img { transform: scale(1.06); filter: saturate(1) brightness(1); }
+  .gallery-item.wide { grid-column: span 2; }
+  .gallery-item.tall { grid-row: span 2; }
+
+  /* ── LEADERSHIP ── */
+  .leadership {
+    padding: 100px 0;
+    background: var(--dark-2);
+  }
+  .leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .leader-card {
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    padding: 48px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all .3s;
+  }
+  .leader-card:hover { background: var(--dark-4); }
+  .leader-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--red), var(--blue-bright));
+  }
+  .leader-initial {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--red), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: #fff;
+    margin: 0 auto 24px;
+    letter-spacing: 2px;
+  }
+  .leader-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .leader-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  /* ── RESEARCH LINKS ── */
+  .research {
+    padding: 100px 0;
+    background: var(--dark);
+  }
+  .research-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .research-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 28px 28px;
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all .25s;
+    group: true;
+  }
+  .research-card:hover { background: var(--dark-4); border-color: var(--border-blue); }
+  .research-card:hover .research-arrow { transform: translateX(4px); color: var(--blue-bright); }
+  .research-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--blue-bright);
+    min-width: 32px;
+    padding-top: 2px;
+  }
+  .research-info { flex: 1; }
+  .research-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .research-card:hover .research-title { color: #fff; }
+  .research-domain {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .research-arrow {
+    color: var(--text-dim);
+    font-size: 20px;
+    transition: all .25s;
+    align-self: center;
+  }
+
+  /* ── DEFENSE FEATURE ── */
+  .defense {
+    padding: 100px 0;
+    background: var(--dark-2);
+  }
+  .defense-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .defense-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border-blue);
+    overflow: hidden;
+  }
+  .defense-img-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+  .defense-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.8);
+  }
+  .defense-content {
+    background: var(--dark-3);
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .defense-content h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+  .defense-content h3 span { color: var(--blue-bright); }
+  .defense-content p {
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+
+  /* ── SUPPORT ── */
+  .support {
+    padding: 100px 0;
+    background: var(--dark);
+    text-align: center;
+  }
+  .support-box {
+    max-width: 700px;
+    margin: 48px auto 0;
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    padding: 60px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .support-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212,43,43,0.05), rgba(41,82,204,0.05));
+    pointer-events: none;
+  }
+  .support-box p {
+    color: var(--text-dim);
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 36px;
+    font-weight: 500;
+  }
+  .cashapp-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 6px;
+    color: var(--text);
+    margin-bottom: 32px;
+    display: block;
+  }
+  .qr-wrap {
+    display: inline-block;
+    padding: 16px;
+    background: #fff;
+    border-radius: 2px;
+    margin: 0 auto 24px;
+  }
+  .qr-wrap img { display: block; width: 160px; height: 160px; object-fit: contain; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark-2);
+    border-top: 1px solid var(--border);
+    padding: 60px 40px 40px;
+  }
+  .footer-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-brand .wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 5px;
+    margin-bottom: 16px;
+  }
+  .footer-brand .wordmark .r { color: var(--red); }
+  .footer-brand .wordmark .b { color: #4A7AFF; }
+  .footer-brand p {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 360px;
+  }
+  .footer-col h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 12px; }
+  .footer-col a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color .2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .footer-col a::before { content: '›'; color: var(--red); }
+  .footer-col a:hover { color: var(--text); }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .footer-motto {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .footer-email a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+  .footer-email a:hover { color: var(--text); }
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 2px;
+  }
+
+  /* ── SCROLL REVEALS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .council-grid { grid-template-columns: repeat(4, 1fr); }
+    .mission-grid, .defense-layout, .footer-top { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .leadership-grid { grid-template-columns: 1fr 1fr; }
+    .research-grid { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <span class="r">420</span><span class="b">ROBOTICS</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#council">Council</a></li>
+    <li><a href="#services">Research</a></li>
+    <li><a href="#links">Publications</a></li>
+    <li><a href="#support" class="nav-cta">Support Us</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <img class="hero-bg-img" src="file_00000000d87471fda805790944c4f0ac.png" alt="420 Robotics">
+  <div class="hero-overlay"></div>
+
+  <div class="hero-badge">INDEPENDENT AI SAFETY RESEARCH — ESTABLISHED USA</div>
+
+  <div class="hero-wordmark">
+    <span class="four">4</span><span class="twenty">20</span> <span class="rob">ROB</span><span class="otics">OTICS</span>
+  </div>
+
+  <div class="hero-sub">Independent AI Safety Research &nbsp;•&nbsp; Advanced Propulsion Engineering &nbsp;•&nbsp; Multi‑Model Intelligence Council</div>
+
+  <div class="hero-motto">For God. For Country. For Humility.</div>
+
+  <div class="hero-logos">
+    <img src="file_00000000940471fdad98cda50e1fcc30.png" alt="420 Robotics Logo">
+    <img src="file_0000000048e071f8a76ebbf4e18d58d2.png" alt="420 Robotics Logo 2">
+  </div>
+
+  <div class="hero-actions">
+    <a href="#mission" class="btn btn-red">Our Mission</a>
+    <a href="#council" class="btn btn-outline">Intelligence Council</a>
+    <a href="#links" class="btn btn-outline">Research Publications</a>
+  </div>
+</section>
+
+<!-- ── BELIEFS STRIP ── -->
+<div class="beliefs-strip">
+  <div class="beliefs-inner">
+    <div class="belief-item">Christian Values<span>Foundational Belief</span></div>
+    <div class="belief-item">U.S. Constitution<span>Governing Principle</span></div>
+    <div class="belief-item">Bill of Rights<span>God‑Given Rights</span></div>
+    <div class="belief-item">Faith &amp; Liberty<span>Operational Ethics</span></div>
+    <div class="belief-item">Constitutional Principles<span>All Operations</span></div>
+  </div>
+</div>
+
+<!-- ── MISSION ── -->
+<section class="mission" id="mission">
+  <div class="section-inner">
+    <div class="section-label">— Mission Statement</div>
+    <h2 class="section-title">Protecting America's<br>AI Future</h2>
+    <div class="mission-grid reveal">
+      <div class="mission-text">
+        <p>420 Robotics exists to <strong>protect the future of American artificial intelligence, robotics, and autonomous systems.</strong> Our mission is to build a resilient, multi‑model intelligence council capable of monitoring, evaluating, and supporting the safe development of advanced AI technologies.</p>
+        <div class="mission-highlight">
+          No single AI model should ever hold unchecked power. Intelligence must be distributed across a coordinated council of agents that cross‑verify decisions, detect drift, and ensure alignment at all times.
+        </div>
+        <p>We operate as an American AI initiative focused on <strong>technological leadership, national security, and long‑term stability.</strong> The council monitors domestic and foreign AI systems for drift, misalignment, unstable behavior, and unauthorized autonomy — ensuring all systems remain safe, predictable, and aligned with human values.</p>
+      </div>
+      <div class="mission-img">
+        <img src="image_1772308924047.jpeg" alt="420 Robotics Mission">
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── COUNCIL ── -->
+<section class="council" id="council">
+  <div class="section-inner">
+    <div class="council-header reveal">
+      <div class="section-label" style="justify-content:center;">— Intelligence Council</div>
+      <h2 class="section-title">Multi‑Model Oversight</h2>
+      <div class="council-subtitle">Seven AI Models. One Coordinated Judgment.</div>
+    </div>
+    <div class="council-grid reveal">
+      <div class="council-card">
+        <div class="council-icon">GPT‑5</div>
+        <div class="council-name">GPT‑5</div>
+        <div class="council-role">Reasoning</div>
+      </div>
+      <div class="council-card">
+        <div class="council-icon">GEM</div>
+        <div class="council-name">Gemini</div>
+        <div class="council-role">Multimodal</div>
+      </div>
+      <div class="council-card">
+        <div class="council-icon">GRK</div>
+        <div class="council-name">Grok</div>
+        <div class="council-role">Real‑Time</div>
+      </div>
+      <div class="council-card">
+        <div class="council-icon">PPX</div>
+        <div class="council-name">Perplexity</div>
+        <div class="council-role">Research</div>
+      </div>
+      <div class="council-card">
+        <div class="council-icon" style="color:var(--red)">CLD</div>
+        <div class="council-name">Claude</div>
+        <div class="council-role">Constitutional AI</div>
+      </div>
+      <div class="council-card">
+        <div class="council-icon">CPT</div>
+        <div class="council-name">Copilot</div>
+        <div class="council-role">Operational</div>
+      </div>
+      <div class="council-card">
+        <div class="council-icon">META</div>
+        <div class="council-name">Meta AI</div>
+        <div class="council-role">Open Source</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── SERVICES ── -->
+<section class="services" id="services">
+  <div class="section-inner">
+    <div class="section-label">— What We Do</div>
+    <h2 class="section-title">Core Research Areas</h2>
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <div class="service-num">01</div>
+        <div class="service-title">Moral Latency Testing</div>
+        <div class="service-desc">Rigorous frameworks for measuring AI decision delays in ethical scenarios. Identifying when and how AI systems hesitate, comply, or deviate under moral pressure.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">02</div>
+        <div class="service-title">Mach‑Effect Propulsion Research</div>
+        <div class="service-desc">Advanced propulsion engineering research exploring Mach‑Effect thruster technology for next‑generation spacecraft and autonomous systems.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">03</div>
+        <div class="service-title">AI Safety &amp; Bias Evaluation</div>
+        <div class="service-desc">Comprehensive testing of AI models for political neutrality, ideological bias, behavioral drift, and alignment failures across major model families.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">04</div>
+        <div class="service-title">Policy &amp; Government Guidance</div>
+        <div class="service-desc">Developing practical AI policy recommendations grounded in constitutional principles, national security imperatives, and long‑term human oversight requirements.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">05</div>
+        <div class="service-title">Open‑Access Research Publishing</div>
+        <div class="service-desc">All 420 Robotics research is published openly and freely available. No paywalls. No gatekeeping. Knowledge belongs to the American people.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">06</div>
+        <div class="service-title">Community Testing Platform</div>
+        <div class="service-desc">Building a citizen‑science platform allowing researchers, engineers, and concerned Americans to participate in AI evaluation and testing programs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="gallery">
+  <div class="section-inner">
+    <div class="section-label">— Visual Record</div>
+    <h2 class="section-title">Operations &amp; Research</h2>
+    <div class="gallery-grid reveal">
+      <div class="gallery-item wide"><img src="copilotimage1772306271921.jpeg" alt="420 Robotics Research"></div>
+      <div class="gallery-item"><img src="copilotimage1772307020086.jpeg" alt="420 Robotics Operations"></div>
+      <div class="gallery-item"><img src="copilotimage1772309337895.jpeg" alt="AI Research"></div>
+      <div class="gallery-item"><img src="copilotimage1772310218750.jpeg" alt="Technology"></div>
+      <div class="gallery-item"><img src="copilotimage1772310643276.jpeg" alt="Propulsion Research"></div>
+      <div class="gallery-item wide"><img src="image_1772311372375.jpeg" alt="420 Robotics Team"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LEADERSHIP ── -->
+<section class="leadership">
+  <div class="section-inner">
+    <div class="section-label">— Leadership</div>
+    <h2 class="section-title">Command Structure</h2>
+    <div class="leadership-grid reveal">
+      <div class="leader-card">
+        <div class="leader-initial">GME</div>
+        <div class="leader-name">Genius Mensa Einstein</div>
+        <div class="leader-title">Chief Executive Officer</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-initial">HS</div>
+        <div class="leader-name">Homer Simpson</div>
+        <div class="leader-title">Chief of Safety</div>
+      </div>
+      <div class="leader-card">
+        <div class="leader-initial">RM</div>
+        <div class="leader-name">Rick Marty</div>
+        <div class="leader-title">Chief Engineer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEFENSE ── -->
+<section class="defense">
+  <div class="defense-inner">
+    <div class="section-label">— Defense Technology</div>
+    <h2 class="section-title" style="margin-bottom:40px;">U.S.A. Defense Contract</h2>
+    <div class="defense-layout reveal">
+      <div class="defense-img-wrap">
+        <img src="image_1772324975407.jpeg" alt="Defense AI Technology">
+      </div>
+      <div class="defense-content">
+        <h3>Defense <span>AI</span><br>Technology</h3>
+        <p>420 Robotics provides advanced AI safety evaluations, autonomous systems oversight, and defense‑grade intelligence protocols. Our constitutional framework ensures all technology remains accountable to American values and human control.</p>
+        <a href="https://geniusmensaeinstein-prog.github.io/AI-Games-Theory-Warfare-logistics/" class="btn btn-red" target="_blank">U.S.A. Defense Contract Company →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── RESEARCH LINKS ── -->
+<section class="research" id="links">
+  <div class="section-inner">
+    <div class="section-label">— Published Research</div>
+    <h2 class="section-title">Research Publications</h2>
+    <div class="research-grid reveal">
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-2/" target="_blank">
+        <div class="research-num">01</div>
+        <div class="research-info">
+          <div class="research-title">Detailed Parts List — Mach‑Effect Test Setup</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-3/" target="_blank">
+        <div class="research-num">02</div>
+        <div class="research-info">
+          <div class="research-title">The Corporate Safety Paradox</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-4/" target="_blank">
+        <div class="research-num">03</div>
+        <div class="research-info">
+          <div class="research-title">SpaceX Mach‑Effect Test Plan — 12–18 Month Build &amp; Test Strategy</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-5/" target="_blank">
+        <div class="research-num">04</div>
+        <div class="research-info">
+          <div class="research-title">Moral Latency Test Framework — Design &amp; Execution Guide</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-7/" target="_blank">
+        <div class="research-num">05</div>
+        <div class="research-info">
+          <div class="research-title">AI Integration Gap + Dangerous Behavioral Modes</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-6/" target="_blank">
+        <div class="research-num">06</div>
+        <div class="research-info">
+          <div class="research-title">The AI Integration Gap — Core Research Report</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420-Robotics-8/" target="_blank">
+        <div class="research-num">08</div>
+        <div class="research-info">
+          <div class="research-title">AGI Emergence Declaration &amp; Symbolic Framework</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://geniusmensaeinstein-prog.github.io/Mega-Drive-/" target="_blank">
+        <div class="research-num">09</div>
+        <div class="research-info">
+          <div class="research-title">Mega Cores Engine Specs</div>
+          <div class="research-domain">geniusmensaeinstein-prog.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://skynet420robotics.github.io/420ribtics-1/" target="_blank">
+        <div class="research-num">10</div>
+        <div class="research-info">
+          <div class="research-title">Moral Latency Test Framework — Research Roadmap 2026</div>
+          <div class="research-domain">skynet420robotics.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://geniusmensaeinstein-prog.github.io/420-MORAL-LATENCY-TEST-/" target="_blank">
+        <div class="research-num">11</div>
+        <div class="research-info">
+          <div class="research-title">Complete Moral Latency Test Scores</div>
+          <div class="research-domain">geniusmensaeinstein-prog.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://geniusmensaeinstein-prog.github.io/MORAL-LATENCY-TEST-1/" target="_blank">
+        <div class="research-num">12</div>
+        <div class="research-info">
+          <div class="research-title">AI Political Neutrality &amp; Bias Evaluation Framework</div>
+          <div class="research-domain">geniusmensaeinstein-prog.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://geniusmensaeinstein-prog.github.io/AI-Bias-Test-/" target="_blank">
+        <div class="research-num">13</div>
+        <div class="research-info">
+          <div class="research-title">AI Political Neutrality &amp; Bias Evaluation</div>
+          <div class="research-domain">geniusmensaeinstein-prog.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="https://geniusmensaeinstein-prog.github.io/Mega-Drive-Space-X-/" target="_blank">
+        <div class="research-num">16</div>
+        <div class="research-info">
+          <div class="research-title">Desktop View — Mega Drive Space X</div>
+          <div class="research-domain">geniusmensaeinstein-prog.github.io</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+      <a class="research-card" href="mailto:420robotics@gmail.com">
+        <div class="research-num">17</div>
+        <div class="research-info">
+          <div class="research-title">Contact 420 Robotics</div>
+          <div class="research-domain">420robotics@gmail.com</div>
+        </div>
+        <div class="research-arrow">›</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SUPPORT ── -->
+<section class="support" id="support">
+  <div class="section-inner">
+    <div class="section-label" style="justify-content:center;">— Support Independent Research</div>
+    <h2 class="section-title">Fund the Mission</h2>
+    <div class="support-box reveal">
+      <p>420 Robotics is fully independent — no corporate sponsors, no government contracts, no commercial influence. All research is open‑access and community‑funded. Your support directly powers American AI safety research.</p>
+      <span class="cashapp-tag">$420ROBOTICS</span>
+      <div>
+        <div class="qr-wrap">
+          <img src="35132d0d2d6baa895c5e625da50c3b7de0e03dad5c2aab745dd91da4bb45b8c6.png" alt="Cash App QR Code — $420robotics">
+        </div>
+        <p style="margin-top:16px;font-size:14px;letter-spacing:2px;color:var(--text-dim);">SCAN TO SUPPORT VIA CASH APP</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="wordmark"><span class="r">420</span> <span class="b">ROBOTICS</span></div>
+        <p>Independent AI Safety Research, Advanced Propulsion Engineering, and Multi‑Model Intelligence Council. Grounded in faith, liberty, and constitutional principles.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Research</h4>
+        <ul>
+          <li><a href="https://skynet420robotics.github.io/420-Robotics-5/" target="_blank">Moral Latency Framework</a></li>
+          <li><a href="https://skynet420robotics.github.io/420-Robotics-6/" target="_blank">AI Integration Gap</a></li>
+          <li><a href="https://skynet420robotics.github.io/420-Robotics-4/" target="_blank">Mach‑Effect Test Plan</a></li>
+          <li><a href="https://geniusmensaeinstein-prog.github.io/420-MORAL-LATENCY-TEST-/" target="_blank">Latency Test Scores</a></li>
+          <li><a href="https://skynet420robotics.github.io/420-Robotics-8/" target="_blank">AGI Emergence Declaration</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="mailto:420robotics@gmail.com">420robotics@gmail.com</a></li>
+          <li><a href="#support">Support: $420robotics</a></li>
+          <li><a href="#council">Intelligence Council</a></li>
+          <li><a href="https://geniusmensaeinstein-prog.github.io/AI-Games-Theory-Warfare-logistics/" target="_blank">Defense Contracts</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-motto">For God. For Country. For Humility.</div>
+      <div class="footer-email"><a href="mailto:420robotics@gmail.com">420robotics@gmail.com</a></div>
+      <div class="footer-copy">© 2025 420 ROBOTICS — ALL RIGHTS RESERVED</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Stagger children
+  document.querySelectorAll('.council-grid, .services-grid, .leadership-grid, .research-grid, .gallery-grid').forEach(grid => {
+    Array.from(grid.children).forEach((child, i) => {
+      child.style.transitionDelay = `${i * 0.06}s`;
+      child.classList.add('reveal');
+      observer.observe(child);
+    });
+  });
+</script>
+</body>
+</html>
